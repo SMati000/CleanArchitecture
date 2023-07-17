@@ -1,0 +1,8 @@
+.env
+.venv
+database.db
+**/__init__.py
+**/__pycache__/
+entities/Card.py
+entities/Cart.py
+entities/Product.py
