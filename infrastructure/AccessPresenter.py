@@ -2,9 +2,31 @@ from useCases.SimpleMessageDTO import SimpleMessageDTO, SessionMessageDTO
 
 
 class PresenterI:
+    """
+    Interface of a presenter
+
+    Attributes:
+    --------------
+    viewModel: str
+        message in HTML ready to be replied to the user
+    
+    Method
+    ----------
+    present(message: SimpleMessageDTO):
+        generates the viewModel
+    """
+
     _viewModel: str
 
     def present(self, message: SimpleMessageDTO):
+        """
+        generates the viewModel
+        
+        Parameters
+        ----------
+        message: SimpleMessageDTO
+            The info to be displayed in the view model
+        """
         pass
 
     def getViewModel(self) -> str:

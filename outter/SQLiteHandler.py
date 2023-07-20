@@ -2,7 +2,15 @@ import sqlite3
 
 
 class SQLiteHandler:
+    """
+    Inits the Database.
+    """
+
     def __init__(self):
+        """
+        Creates the database file in case it didn't exist. And checks that all tables are created, or creates them otherwise.
+        """
+
         con = sqlite3.connect("database.db")
         cur = con.cursor()
 

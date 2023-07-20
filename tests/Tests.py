@@ -14,6 +14,9 @@ from outter.DataAccess import UsersDataAccess
 
 class Tests(unittest.TestCase):  
     def test_db_existence(self):
+        """
+        Tests the existence of the database file and its tables
+        """
         db = SQLiteHandler()
         self.assertTrue(os.path.isfile(os.path.relpath("./database.db")), "../database.db no existe")
 
@@ -26,14 +29,17 @@ class Tests(unittest.TestCase):
         con.close()
 
     def test_db_users(self):
+        """
+        Tests the well functioning of the methods of UsersDataAccess class
+        """
         users: DataAccessI
         users = UsersDataAccess()
 
         tp = ("testU", "testP")
         users.save(tp)
-        self.assertTrue(users.get(tp), "No se agrego, o no se lee correctamente el registro a la tabla users")
-        users.remove(tp[0])
-        self.assertFalse(users.get(tp), "No se elimino el registro de la tabla users")
+        self.assertTrue(users.exists(tp), "No se agrego, o no se lee correctamente el registro a la tabla users")
+        users.remove((tp[0]))
+        self.assertFalse(users.exists((tp[0])), "No se elimino el registro de la tabla users")
 
 
 
