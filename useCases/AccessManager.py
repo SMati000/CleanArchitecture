@@ -1,9 +1,8 @@
 from dataclasses import dataclass
 
 from entities import User
-from infrastructure.DataAccessI import DataAccessI
-from outter.DataAccess import UsersDataAccess
 from useCases.SimpleMessageDTO import SessionMessageDTO
+from infrastructure.DataAccessI import DataAccessI
 
 @dataclass(frozen=True)
 class sessionDTO:
@@ -20,6 +19,8 @@ class AccessManagerI:
 
     Attributes
     -----------
+    _dbPersister: DataAccessI
+        instance of DataAccessI to have access to the database
     _session: sessionDTO
         Data of the session to be loaded
     _message
@@ -32,11 +33,13 @@ class AccessManagerI:
     login():
         method that should check that the session is actually saved in the database and if so, log in
     """
+    _dbPersister: DataAccessI
     _session: sessionDTO
     _message: SessionMessageDTO
 
-    def __init__(self, session: sessionDTO):
+    def __init__(self, dbPersister: DataAccessI, session: sessionDTO):
         """initializes the session instance to be loaded"""
+        self._dbPersister = dbPersister
         self._session = session
 
     def signin(self):
@@ -54,21 +57,16 @@ class AccessManagerI:
 
 class SimpleAccessManager(AccessManagerI):
     """Implements AccessManagerI"""
-    __db: DataAccessI
-
-    def __init__(self, session: sessionDTO):
-        self._session = session
-        self.__db = UsersDataAccess()
 
     # Override
     def signin(self):
-        self.__db.save((self._session.user, self._session.password))
+        self._dbPersister.save((self._session.user, self._session.password))
         self.__continue("Signed In")
         
 
     # Override
     def login(self):
-        if self.__db.exists((self._session.user)):
+        if self._dbPersister.exists((self._session.user, )):
             self.__continue("Logged In")
         else:
             pass # ERROR

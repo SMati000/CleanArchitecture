@@ -1,5 +1,5 @@
-from infrastructure import AccessController
 import functools
+from dependency_injector import providers
 import logging
 import os
 from typing import Dict
@@ -13,7 +13,9 @@ from telegram.constants import ParseMode
 from telegram.ext import Application, CommandHandler, MessageHandler, ConversationHandler, \
     filters, PicklePersistence, CallbackQueryHandler, InlineQueryHandler, ContextTypes
 
+from infrastructure.AccessController import Mode
 from infrastructure.AccessPresenter import AccessPresenter, PresenterI
+from DependenciesContainer import Container
 
 
 class TelegramAPIHandler:
@@ -58,7 +60,7 @@ class TelegramAPIHandler:
 
     logger: logging.Logger
     
-    mode: AccessController.Mode
+    mode: Mode
     tempUsername: str
     tempPassword: str
 
@@ -127,7 +129,7 @@ class TelegramAPIHandler:
             in this case, call the password(update, context) method
         """
 
-        self.mode = AccessController.Mode(update.message.text == "Sign Up")
+        self.mode = Mode(update.message.text == "Sign Up")
         
         await update.message.reply_text(
             "I see! Please tell me your username",
@@ -184,7 +186,9 @@ class TelegramAPIHandler:
 
         self.tempPassword = update.message.text
 
-        c = AccessController.AccessController(self.tempUsername, self.tempPassword)
+        c = Container().sAccessController(
+            username = self.tempUsername, password = self.tempPassword
+        )
         c.access(self.mode)
 
         presenter: PresenterI

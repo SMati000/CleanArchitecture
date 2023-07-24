@@ -1,9 +1,9 @@
 from infrastructure.DataAccessI import DataAccessI
-
+from DependenciesContainer import Container
 
 class UsersDataAccess(DataAccessI):
     """
-    manage the users table from the database
+    manage the users table from the database 'database.db'
 
     Methods
     --------
@@ -15,7 +15,10 @@ class UsersDataAccess(DataAccessI):
         tries to remove, if it exists, from the users table
     """
 
-    def exists(self, pk: tuple) -> bool:
+    def __init__(self):
+        super().__init__(db = Container().db())
+
+    def exists(self, pk: tuple) -> bool: # documentados en AccessManagerI
         if len(pk) != 1:
             pass # ERROR
 

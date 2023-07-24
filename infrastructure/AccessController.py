@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 
-from useCases.AccessManager import AccessManagerI, SimpleAccessManager, sessionDTO
+from useCases.AccessManager import AccessManagerI, sessionDTO
 from useCases.SimpleMessageDTO import SessionMessageDTO
+
+from dependency_injector.wiring import inject
 
 @dataclass()
 class Mode:
@@ -22,36 +24,50 @@ class AccessController:
 
     Attributes
     ------------
-    __session: sessionDTO
-        contains the data that the use case needs in an easy to read way for it
     __a
         the use case instance
 
     Methods
     ---------
+    @staticmethod
+    getSession(username, passoword) -> sessionDTO:
+        checks the username and password are valid and returns a sessionDTO
     access(mode):
         calls the corresponding function of the use case according to the mode
     """
 
-    __session: sessionDTO
     __a: AccessManagerI
 
-    def __init__(self, username: str, password: str):
+    @inject
+    def __init__(self, a: AccessManagerI):
         """
-        Checks that username and password entered by the user respect the conventions and arrange the data 
-        in an easy way for the use case to read
+        initializes the AccessManager
 
         Parameters
         -----------
+        a: AccessManagerI
+        """
+        self.__a = a
+        
+    @staticmethod
+    def getSession(username: str, password: str) -> sessionDTO:
+        """
+        Checks that username and password entered by the user respect the conventions and arrange the data 
+        in an easy way for the use case to read, returning a sessionDTO
+
+        Parameters:
+        -------------
         username: str
         password: str
+
+        Return:
+        ------------
+        session: sessionDTO
         """
-        if username.isalnum() and password.isalnum(): 
-            self.__session = sessionDTO(username, password)
-            self.__a = SimpleAccessManager(self.__session)
-        else:
-            pass # ERROR
+        if username.isalnum() and password.isalnum():
+            return sessionDTO(username, password)
         
+        return None # ERROR
 
     def access(self, mode: Mode):
         """

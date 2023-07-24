@@ -6,3 +6,4 @@ database.db
 entities/Card.py
 entities/Cart.py
 entities/Product.py
+*.mdj

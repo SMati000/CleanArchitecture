@@ -1,9 +1,9 @@
-import sqlite3
+from sqlite3 import Connection, Cursor
 
 
 class DataAccessI:
     """
-    Interface to manage tables from the database
+    Interface to manage tables from a database
 
     Methods
     --------
@@ -15,8 +15,12 @@ class DataAccessI:
         tries to remove, if it exists, from a table
     """
     
-    con = sqlite3.connect("database.db")
-    cur = con.cursor()
+    con: Connection
+    cur: Cursor
+
+    def __init__(self, db: Connection):
+        self.con = db
+        self.cur = self.con.cursor()
 
     def exists(self, pk: tuple) -> bool:
         """
