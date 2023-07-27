@@ -48,26 +48,6 @@ class AccessController:
         a: AccessManagerI
         """
         self.__a = a
-        
-    @staticmethod
-    def getSession(username: str, password: str) -> sessionDTO:
-        """
-        Checks that username and password entered by the user respect the conventions and arrange the data 
-        in an easy way for the use case to read, returning a sessionDTO
-
-        Parameters:
-        -------------
-        username: str
-        password: str
-
-        Return:
-        ------------
-        session: sessionDTO
-        """
-        if username.isalnum() and password.isalnum():
-            return sessionDTO(username, password)
-        
-        return None # ERROR
 
     def access(self, mode: Mode):
         """

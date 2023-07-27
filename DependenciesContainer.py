@@ -3,6 +3,7 @@ from dependency_injector import containers, providers
 import sqlite3
 
 from infrastructure.AccessController import AccessController
+from useCases.AccessManager import sessionDTO
 
 def provide_db() -> sqlite3.Connection:
     """
@@ -39,7 +40,7 @@ def provide_access_controller(username: str, password: str) -> AccessController:
     from useCases.AccessManager import SimpleAccessManager
     from outter.DataAccess import UsersDataAccess
     
-    ses = AccessController.getSession(username, password)
+    ses = sessionDTO(username, password)
 
     container = Container(
         dataAccess = providers.Factory(UsersDataAccess),

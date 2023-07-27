@@ -12,6 +12,13 @@ class sessionDTO:
     user: str
     password: str
 
+    def __init__(self, user: str, pswd: str):
+        if user.isalnum() and pswd.isalnum():
+            object.__setattr__(self, 'user', user)
+            object.__setattr__(self, 'password', pswd)
+        else:
+            raise Exception("Username and password must be alphanumeric")
+
 
 class AccessManagerI:
     """
