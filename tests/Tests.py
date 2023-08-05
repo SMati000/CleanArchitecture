@@ -33,15 +33,19 @@ class Tests(unittest.TestCase):
         """
         Tests the well functioning of the methods of UsersDataAccess class
         """
-        container = Container(dataAccess = providers.Factory(UsersDataAccess))
+        container = Container(
+            dataAccess = providers.Factory(UsersDataAccess)
+        )
+        container.wire(modules=[
+            "infrastructure.DataAccessI",
+        ])
+
         users = container.dataAccess()
-        
         tp = ("testU", "testP")
         users.save(tp)
         self.assertTrue(users.exists(tp), "No se agrego, o no se lee correctamente el registro a la tabla users")
         users.remove((tp[0],))
         self.assertFalse(users.exists(tp), "No se elimino el registro de la tabla users")
-
 
 
 if __name__ == '__main__':  

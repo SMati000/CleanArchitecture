@@ -1,9 +1,11 @@
 from dependency_injector import containers, providers
 
-import sqlite3
+from useCases.AccessManager import AccessManagerI, SimpleAccessManager, sessionDTO
+# from infrastructure.AccessController import AccessController
+from infrastructure.DataAccessI import DataAccessI
+from outter.DataAccess import UsersDataAccess
 
-from infrastructure.AccessController import AccessController
-from useCases.AccessManager import sessionDTO
+import sqlite3
 
 def provide_db() -> sqlite3.Connection:
     """
@@ -24,35 +26,6 @@ def provide_db() -> sqlite3.Connection:
     
     return con
 
-def provide_access_controller(username: str, password: str) -> AccessController:
-    """
-    Creates an AccessController instance. This is used from the container of dependencies with a callable provider
-
-    Parameters
-    -----------
-    username: str
-    password: str
-
-    Return
-    ---------
-    instance: AccessController
-    """
-    from useCases.AccessManager import SimpleAccessManager
-    from outter.DataAccess import UsersDataAccess
-    
-    ses = sessionDTO(username, password)
-
-    container = Container(
-        dataAccess = providers.Factory(UsersDataAccess),
-        accessManager = providers.Factory(SimpleAccessManager)
-    )
-
-    c = AccessController(
-        a = container.accessManager(container.dataAccess(), session=ses)
-    )
-
-    return c
-
 class Container(containers.DeclarativeContainer):
     """
     Container of dependencies
@@ -65,19 +38,17 @@ class Container(containers.DeclarativeContainer):
         instance of DataAccessI
     accessManager:
         instance of AccessManagerI
-    sAccessController:
-        instance of an AccessController configured with a SimpleAccessManager
+    accessManager_factory:
+        specific instance of accessManager dependency according to container's config
     """
-    from useCases.AccessManager import AccessManagerI
-    from infrastructure.DataAccessI import DataAccessI
 
     config = providers.Configuration()
 
-    db = providers.Singleton(providers.Callable(provide_db))
-
-    dataAccess = providers.Dependency(instance_of = DataAccessI)
+    db = providers.Singleton(provide_db)
+    dataAccess = providers.AbstractFactory(DataAccessI)
 
     accessManager = providers.Dependency(instance_of = AccessManagerI)
-
-    sAccessController = providers.Callable(provide_access_controller)
-
+    accessManager_factory = providers.Factory(
+        accessManager,
+        dbPersister = providers.Factory(UsersDataAccess)
+    )

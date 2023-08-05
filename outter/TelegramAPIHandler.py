@@ -1,5 +1,4 @@
 import functools
-from dependency_injector import providers
 import logging
 import os
 from typing import Dict
@@ -15,7 +14,7 @@ from telegram.ext import Application, CommandHandler, MessageHandler, Conversati
 
 from infrastructure.AccessController import Mode
 from infrastructure.AccessPresenter import AccessPresenter, PresenterI
-from DependenciesContainer import Container
+from useCases.AccessManager import sessionDTO
 
 
 class TelegramAPIHandler:
@@ -186,10 +185,9 @@ class TelegramAPIHandler:
 
         self.tempPassword = update.message.text
 
-        c = Container().sAccessController(
-            username = self.tempUsername, password = self.tempPassword
-        )
-        c.access(self.mode)
+        from infrastructure import AccessController
+        c = AccessController.AccessController()
+        c.access(self.mode, self.tempUsername, self.tempPassword)
 
         presenter: PresenterI
         presenter = AccessPresenter()

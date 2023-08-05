@@ -28,8 +28,6 @@ class AccessManagerI:
     -----------
     _dbPersister: DataAccessI
         instance of DataAccessI to have access to the database
-    _session: sessionDTO
-        Data of the session to be loaded
     _message
         The message to be returned so that it can be passed on to the presenter and then showed to the user
 
@@ -41,19 +39,17 @@ class AccessManagerI:
         method that should check that the session is actually saved in the database and if so, log in
     """
     _dbPersister: DataAccessI
-    _session: sessionDTO
     _message: SessionMessageDTO
 
-    def __init__(self, dbPersister: DataAccessI, session: sessionDTO):
+    def __init__(self, dbPersister: DataAccessI):
         """initializes the session instance to be loaded"""
         self._dbPersister = dbPersister
-        self._session = session
 
-    def signin(self):
+    def signin(self, session: sessionDTO):
         """should save the session data to the database, and then sign in"""
         pass
 
-    def login(self):
+    def login(self, session: sessionDTO):
         """should check that the session is actually saved in the database and if so, log in"""
         pass
 
@@ -66,21 +62,21 @@ class SimpleAccessManager(AccessManagerI):
     """Implements AccessManagerI"""
 
     # Override
-    def signin(self):
-        self._dbPersister.save((self._session.user, self._session.password))
-        self.__continue("Signed In")
+    def signin(self, session: sessionDTO):
+        self._dbPersister.save((session.user, session.password))
+        self.__continue("Signed In", session)
         
 
     # Override
-    def login(self):
-        if self._dbPersister.exists((self._session.user, )):
-            self.__continue("Logged In")
+    def login(self, session: sessionDTO):
+        if self._dbPersister.exists((session.user, )):
+            self.__continue("Logged In", session)
         else:
             pass # ERROR
         
         
-    def __continue(self, title: str):
+    def __continue(self, title: str, session: sessionDTO):
         # After database is checked, this method is internally called to generate the message
         self._message = SessionMessageDTO(title, "Warning! This is sensitive data!", 
-                                    self._session.user, self._session.password)
+                                    session.user, session.password)
         

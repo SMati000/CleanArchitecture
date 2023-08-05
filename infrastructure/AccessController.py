@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from useCases.AccessManager import AccessManagerI, sessionDTO
 from useCases.SimpleMessageDTO import SessionMessageDTO
 
-from dependency_injector.wiring import inject
+from dependency_injector.wiring import inject, Provide
 
 @dataclass()
 class Mode:
@@ -29,9 +29,6 @@ class AccessController:
 
     Methods
     ---------
-    @staticmethod
-    getSession(username, passoword) -> sessionDTO:
-        checks the username and password are valid and returns a sessionDTO
     access(mode):
         calls the corresponding function of the use case according to the mode
     """
@@ -39,7 +36,7 @@ class AccessController:
     __a: AccessManagerI
 
     @inject
-    def __init__(self, a: AccessManagerI):
+    def __init__(self, a: AccessManagerI = Provide["accessManager_factory"]):
         """
         initializes the AccessManager
 
@@ -49,18 +46,22 @@ class AccessController:
         """
         self.__a = a
 
-    def access(self, mode: Mode):
+    def access(self, mode: Mode, user: str, password: str):
         """
         Calls the corresponding function of the use case according to the mode
 
         Parameters
         -----------
         mode: Mode
+        user: str
+        password: str
         """
+        session = sessionDTO(user, password)
+
         if(mode.signIn):
-            self.__a.signin()
+            self.__a.signin(session)
         else:
-            self.__a.login()
+            self.__a.login(session)
 
     def getMessage(self) -> SessionMessageDTO:
         return self.__a.getMessage()

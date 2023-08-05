@@ -1,5 +1,6 @@
 from sqlite3 import Connection, Cursor
 
+from dependency_injector.wiring import inject, Provide
 
 class DataAccessI:
     """
@@ -18,7 +19,8 @@ class DataAccessI:
     con: Connection
     cur: Cursor
 
-    def __init__(self, db: Connection):
+    @inject
+    def __init__(self, db: Connection = Provide["db"]):
         self.con = db
         self.cur = self.con.cursor()
 
