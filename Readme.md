@@ -32,6 +32,7 @@ You will find a `tests` package with few unit tests, for now.
 ## Resources & Bibliography
 
  - [Clean Architecture Article](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+ - [Cataloging Dependency Injection Anti-Patterns in Software Systems, University of Copenhagen, Denmark](https://arxiv.org/pdf/2109.04256.pdf)
  - Practical book: "Implementing the Clean Architecture" by Sebastian Buczynski
  - [Python Telegram API](https://docs.python-telegram-bot.org/en/stable/index.html)
  - [SQLite](https://docs.python.org/3/library/sqlite3.html)
